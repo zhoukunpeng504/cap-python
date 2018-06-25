@@ -16,9 +16,7 @@ def front_view(request, path):
         return HttpResponseRedirect(path+"index.html")
     else:
         real_file_path = os.path.join("/front", "." + path)
-        print real_file_path
-        # real_file_path = os.path.abspath(real_file_path)
-        # print real_file_path
+        real_file_path = os.path.abspath(real_file_path)
         try:
             return serve(request, real_file_path, settings.STATICFILES_DIRS[0])
         except:
