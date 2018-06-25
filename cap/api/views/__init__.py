@@ -28,9 +28,9 @@ def get_session_key(request):
     key = md5(str(random.random()) + str(time.time()))
     key = aes_encrypt("1" * 16, "bxmppi" + key[16:])
     result = JsonResponse({"errorCode": 0, "data": key, "message": "success", "formError": {}})
-    # if request.META.get("HTTP_ORIGIN","") == "appstyle.bao361.cn" :
-    #     result["Access-Control-Allow-Origin"]="appstyle.bao361.cn"
-    return  result
+    if request.META.get("HTTP_ORIGIN",""):
+        result["Access-Control-Allow-Origin"] = request.META.get("HTTP_ORIGIN","")
+    return result
 
 
 def meta_test(request):

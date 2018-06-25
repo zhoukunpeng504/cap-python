@@ -69,8 +69,8 @@ class Options(usage.Options):
 
 class MyServiceMaker(object):
     implements(IServiceMaker, IPlugin)
-    tapname = "crondeamon-worker"
-    description = "crondeammon worker role ..."
+    tapname = "cap-worker"
+    description = "cap worker role ..."
     options = Options
 
     def makeService(self, options):
