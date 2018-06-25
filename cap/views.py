@@ -22,7 +22,13 @@ def front_view(request, path):
         try:
             return serve(request, real_file_path, settings.STATICFILES_DIRS[0])
         except:
-            return HttpResponse("404!%s" % real_file_path, status=404)
+            if path.startswith("/static/"):
+                try:
+                    serve(request, path.replace("/static/",''), settings.STATICFILES_DIRS[0])
+                except:
+                    return  HttpResponse("404!%s"%real_file_path,status=404)
+            else:
+                return HttpResponse("404!%s" % real_file_path, status=404)
 
 
 
