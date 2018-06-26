@@ -1,6 +1,6 @@
 #coding:utf-8
 # Django settings for cap project.
-import   os
+import os
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -8,6 +8,7 @@ LOGIN_URL="/login/"
 LANGUAGE_CODE="zh-CN"
 
 config = ["192.168.14.90",3306,"cap_test","spider","123456"]
+
 
 DATABASES = {
     'default': {

@@ -12,7 +12,10 @@ import sys
 from twisted.web import server
 import os
 import netifaces
-from twisted.python.logfile import DailyLogFile,LogFile
+import re
+from twisted.internet import  reactor
+from twisted.web.wsgi import WSGIResource
+
 
 reload(sys)
 sys.setdefaultencoding("utf-8")
@@ -29,13 +32,26 @@ def get_local_ipaddr():
             results.append(_)
     return results
 
+def option_mysql_url_valid(val):
+    if re.match(r".+?:\d+/.+",val):
+        return val
+    else:
+        raise Exception("%s 不是一个可用的数据库地址。 例子：192.168.8.94:3306/cap_db" % (val))
 
-def option_master_valid(val):
+
+option_mysql_url_valid.coerceDoc = "数据库地址， 例如：192.168.8.94:3306/cap_db"
+
+def option_mysql_user_valid(val):
     return val
 
+option_mysql_user_valid.coerceDoc = "数据库用户， 例如：admin"
 
-option_master_valid.coerceDoc = "主节点的IP地址, 比如 192.168.11.1"
 
+
+def option_mysql_password_valid(val):
+    return val
+
+option_mysql_password_valid.coerceDoc = "数据库密码， 例如：123456"
 
 def option_host_valid(val):
     if val in get_local_ipaddr():
@@ -47,42 +63,33 @@ def option_host_valid(val):
 option_host_valid.coerceDoc = "服务绑定的IP地址，本机所有可绑定的IP地址如下 %s" % (
     ",".join(get_local_ipaddr()))
 
-def option_work_dir_valid(val):
-    if val[0]!='/':
-        raise Exception("%s 必须是一个绝对路径,比如 /data/crondeamon_work ")
-    try:
-        assert os.path.exists(val)
-    except:
-        raise Exception("%s 不是一个可用的目录,请检查目录是否存在及权限是否正确！"%val)
-    return val
-
-
-option_work_dir_valid.coerceDoc = "服务的工作目录"
 
 class Options(usage.Options):
     optParameters = [
-        ["master", "m", None, None, option_master_valid],
+        ["mysql_url", "l", None, None, option_mysql_url_valid],
+        ["mysql_user", "r", None, None, option_mysql_user_valid],
+        ["mysql_password",'d', None, None, option_mysql_password_valid],
         ["host", "h", None, None, option_host_valid],
-        ["work_dir","w",None,None,option_work_dir_valid]
     ]
 
 
-class MyServiceMaker(object):
+
+class AServiceMaker(object):
     implements(IServiceMaker, IPlugin)
-    tapname = "cap-worker"
-    description = "cap-worker服务，用于cap系统。"
+    tapname = "cap-master"
+    description = "cap-master服务，用于cap系统。"
     options = Options
 
     def makeService(self, options):
         config = options
-        s = MultiService()
+        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "cap.cap.settings")
+        os.environ.setdefault("test","testzhou")
+        from django.core.handlers.wsgi import WSGIHandler
+        application = WSGIHandler()
+        resource = WSGIResource(reactor, reactor.getThreadPool(), application)
+        ui_service=TCPServer(9912,server.Site(resource),interface=config["host"])
+        return ui_service
 
-        from cap.worker import service as mainrpc
-        serverfactory = server.Site(mainrpc.MainRpc(config["master"],config["work_dir"]))
-        slave_service = TCPServer(9913, serverfactory, interface=config["host"])
-        slave_service.setServiceParent(s)
-        return s
 
-
-serviceMaker = MyServiceMaker()
+serviceMaker = AServiceMaker()
 

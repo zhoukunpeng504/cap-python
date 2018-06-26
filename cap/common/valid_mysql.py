@@ -16,7 +16,6 @@ create_table_sql_list=[
   UNIQUE KEY `name` (`name`)
 )  ;''',
 
-
     '''CREATE TABLE if not EXISTS `auth_group_permissions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `group_id` int(11) NOT NULL,
@@ -40,7 +39,6 @@ create_table_sql_list=[
   CONSTRAINT `content_type_id_refs_id_728de91f` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8; ''',
 
-
 '''CREATE TABLE if not EXISTS `auth_user` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(30) NOT NULL,
@@ -57,22 +55,17 @@ create_table_sql_list=[
   UNIQUE KEY `username` (`username`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;''',
 
-    '''CREATE TABLE  if not EXISTS  `django_content_type` (
+'''CREATE TABLE if not EXISTS  `auth_user_groups` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) NOT NULL,
-  `app_label` varchar(100) NOT NULL,
-  `model` varchar(100) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `group_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `app_label` (`app_label`,`model`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;''',
-
-
-
-
-
-
-
-
+  UNIQUE KEY `user_id` (`user_id`,`group_id`),
+  KEY `auth_user_groups_fbfc09f1` (`user_id`),
+  KEY `auth_user_groups_bda51c3c` (`group_id`),
+  CONSTRAINT `group_id_refs_id_f0ee9890` FOREIGN KEY (`group_id`) REFERENCES `auth_group` (`id`),
+  CONSTRAINT `user_id_refs_id_831107f1` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;''',
 
     '''CREATE TABLE if not EXISTS `auth_user_user_permissions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -102,6 +95,15 @@ create_table_sql_list=[
   CONSTRAINT `user_id_refs_id_c8665aa` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;''',
 
+    '''CREATE TABLE  if not EXISTS  `django_content_type` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `app_label` varchar(100) NOT NULL,
+  `model` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `app_label` (`app_label`,`model`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;''',
+
     '''CREATE TABLE if not EXISTS `django_session` (
   `session_key` varchar(40) NOT NULL,
   `session_data` longtext NOT NULL,
@@ -116,25 +118,6 @@ create_table_sql_list=[
   `name` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;''',
-
-    '''
-INSERT ignore  INTO auth_user (id, username, first_name, last_name, email, password, is_staff, is_active, is_superuser, last_login, date_joined) VALUES (1, 'admin', '', '', '18749679769@163.com', 'pbkdf2_sha256$10000$1X58MsOvjyOa$/S7paomFlNanSgEyuwG0QqaFlOVf97DepE0O5eD3YQo=', 1, 1, 1, '2018-06-05 15:39:13', '2018-06-05 15:39:13');''',
-
-   '''INSERT ignore   INTO django_content_type (id,name, app_label, model) VALUES
-   (1, 'permission', 'auth', 'permission') ,
-  (2, 'group', 'auth', 'group') ,
-  (3, 'user', 'auth', 'user') ,
-  (4, 'content type', 'contenttypes', 'contenttype') ,
-  (5, 'session', 'sessions', 'session') ,
-  (6, 'site', 'sites', 'site') ,
-  (7, 'log entry', 'admin', 'logentry') ,
-  (8, 'worker', 'cap', 'worker') ,
-  (9, 'repo', 'cap', 'repo') ,
-  (10, 'pub log', 'cap', 'publog') ,
-  (11, '计划任务', 'cap', 'crontask') ,
-  (12, '计划任务', 'cap', 'deamontask') ,
-  (13, '运行日志', 'cap', 'runlog') ;''',
-
 
             '''INSERT ignore  INTO auth_permission (id, name, content_type_id, codename) VALUES
    (1, 'Can add permission', 1, 'add_permission')  ,
@@ -177,7 +160,31 @@ INSERT ignore  INTO auth_user (id, username, first_name, last_name, email, passw
    (38, 'Can change 运行日志', 13, 'change_runlog')  ,
    (39, 'Can delete 运行日志', 13, 'delete_runlog');''',
     '''insert ignore into django_site values(1,"example.com","example.com");'''
+    '''
+    INSERT ignore  INTO auth_user (id, username, first_name, last_name, email, password, is_staff,
+     is_active, is_superuser, last_login, date_joined) VALUES (
+     1, 'admin', '', '', '18749679769@163.com', 
+     'pbkdf2_sha256$10000$1X58MsOvjyOa$/S7paomFlNanSgEyuwG0QqaFlOVf97DepE0O5eD3YQo=', 
+     1, 1, 1, '2018-06-05 15:39:13', '2018-06-05 15:39:13');''',
+
+    '''INSERT ignore INTO cap_group (id, name, addtime) VALUES (1, '默认', 1528706232);''',
+    '''INSERT ignore INTO django_content_type (id, name, app_label, model) VALUES 
+        (1, 'permission', 'auth', 'permission'),
+         (2, 'group', 'auth', 'group'),
+         (3, 'user', 'auth', 'user'),
+        (4, 'content type', 'contenttypes', 'contenttype'),
+        (5, 'session', 'sessions', 'session'),
+         (6, 'site', 'sites', 'site'),
+         (7, 'log entry', 'admin', 'logentry'),
+         (8, 'worker', 'cap', 'worker'),
+         (9, 'repo', 'cap', 'repo'),
+         (10, 'pub log', 'cap', 'publog'),
+         (11, '计划任务', 'cap', 'crontask'),
+         (12, '计划任务', 'cap', 'deamontask'),
+         (13, '运行日志', 'cap', 'runlog');'''
+    '''INSERT ignore INTO django_site (id, domain, name) VALUES (1, 'example.com', 'example.com');'''
 ]
+
 def valid(host,port,db,user,passwd):
     for i in create_table_sql_list:
         conn = MySQLdb.connect(host=host, port=port, user=user, db=db, passwd=passwd, charset="utf8")
@@ -185,15 +192,11 @@ def valid(host,port,db,user,passwd):
         try:
             cursor.execute(i)
         except Exception as e :
-            print i ,str(e),"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+            print i ,str(e)
+            return False
         cursor.close()
         conn.commit()
         conn.close()
+    return True
 
-def add_server(host,port,db,user,passwd,ip):
-    conn=MySQLdb.connect(host=host,port=port,user=user,db=db,passwd=passwd)
-    cursor=conn.cursor()
-    cursor.execute("insert ignore into cron_cronserve(ip,path) VALUES(%s,%s)",(ip,"."))
-    conn.commit()
-    cursor.close()
-    conn.close()
+
