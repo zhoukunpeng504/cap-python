@@ -6,8 +6,10 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 LOGIN_URL="/login/"
 LANGUAGE_CODE="zh-CN"
-
-config = ["192.168.14.90",3306,"cap_test","spider","123456"]
+if getattr(os,"config",None):
+    config = os.config
+else:
+    config = ["192.168.14.90",3306,"cap_test","spider","123456"]
 
 
 DATABASES = {
@@ -67,7 +69,7 @@ STATIC_ROOT =''
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
-STATIC_URL = '/static/'
+STATIC_URL = '/abcdefgh/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (

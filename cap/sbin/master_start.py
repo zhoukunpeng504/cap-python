@@ -7,7 +7,7 @@ import sys
 import  os
 import  psutil
 import argparse
-
+from cap.common.valid_mysql import valid
 
 def main():
     parser = argparse.ArgumentParser(description="启动cap-master服务")
@@ -28,7 +28,22 @@ def main():
             print "master已经在运行了！无法执行本次启动操作！"
             print cmd_line
             sys.exit(123)
-    os.system("twistd --logger cap.log.master_logger.logger cap-master --mysql_url %s --mysql_user %s --mysql_password %s \
-         --host %s "%(
-        info.mysql_url,info.mysql_user,info.mysql_password,info.host))
-    print "启动cap-master成功"
+    mysql_url = info.mysql_url.strip()
+    try:
+        a,b = mysql_url.split(":")
+        mysql_host = a
+        mysql_port,mysql_db =  b.split("/")
+        mysql_port = int(mysql_port)
+    except:
+        print "mysql相关配置错误"
+    else:
+        mysql_user = info.mysql_user
+        mysql_password = info.mysql_password
+        result = valid(mysql_host,mysql_port,mysql_db,mysql_user,mysql_password)
+        if not result:
+            print "mysql相关配置错误"
+            sys.exit(123)
+        os.system("twistd --logger cap.log.master_logger.logger cap-master --mysql_url %s --mysql_user %s --mysql_password %s \
+             --host %s "%(
+            info.mysql_url,info.mysql_user,info.mysql_password,info.host))
+        print "启动cap-master成功"

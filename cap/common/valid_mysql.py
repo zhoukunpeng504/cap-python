@@ -118,7 +118,101 @@ create_table_sql_list=[
   `name` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;''',
-
+    '''CREATE TABLE  if not exists  `cap_crontask` (
+  `tid` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL,
+  `addtime` int(11) NOT NULL,
+  `uptime` int(11) NOT NULL DEFAULT '0',
+  `rule` varchar(50) NOT NULL,
+  `status` int(11) NOT NULL,
+  `repo_id` int(10) unsigned NOT NULL,
+  `version` varchar(50) NOT NULL DEFAULT '',
+  `pre_build` varchar(200) NOT NULL,
+  `info` varchar(300) NOT NULL,
+  `owner` varchar(300) NOT NULL,
+  `run_cmd` varchar(500) NOT NULL,
+  `run_times` int(10) unsigned NOT NULL,
+  `worker_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `group_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `runlog_rid` int(11) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`tid`),
+  KEY `cap_crontask_52094d6e` (`name`),
+  KEY `cap_crontask_c9ad71dd` (`status`),
+  KEY `cap_crontask_4741fd1b` (`owner`)
+) ENGINE=InnoDB AUTO_INCREMENT=95 DEFAULT CHARSET=utf8''',
+    '''CREATE TABLE  if not exists  `cap_deamontask` (
+  `tid` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL,
+  `addtime` int(11) NOT NULL,
+  `uptime` int(11) NOT NULL DEFAULT '0',
+  `status` int(11) NOT NULL,
+  `version` varchar(50) NOT NULL DEFAULT '',
+  `pre_build` varchar(200) NOT NULL,
+  `info` varchar(300) NOT NULL,
+  `owner` varchar(300) NOT NULL,
+  `run_cmd` varchar(500) NOT NULL,
+  `run_times` int(10) unsigned NOT NULL,
+  `repo_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `worker_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `group_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `runlog_rid` int(11) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`tid`),
+  KEY `cap_deamontask_52094d6e` (`name`),
+  KEY `cap_deamontask_4741fd1b` (`owner`)
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8''',
+    '''CREATE TABLE if not exists  `cap_group` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL DEFAULT '',
+  `addtime` int(11) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8''',
+    '''CREATE TABLE if not exists  `cap_repo` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `type` int(10) unsigned NOT NULL,
+  `repo_url` varchar(200) NOT NULL,
+  `user` varchar(50) NOT NULL,
+  `password` varchar(50) NOT NULL,
+  `addtime` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `repo_url` (`repo_url`)
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8''',
+'''CREATE TABLE  if not exists  `cap_runlog` (
+  `rid` int(11) NOT NULL AUTO_INCREMENT,
+  `tid` int(11) NOT NULL,
+  `type` varchar(30) NOT NULL,
+  `repo_url` varchar(100) NOT NULL,
+  `version` varchar(100) NOT NULL,
+  `addtime` int(11) NOT NULL,
+  `begintime` int(11) NOT NULL,
+  `endtime` int(11) NOT NULL DEFAULT '0',
+  `status` int(11) NOT NULL,
+  `stderror` longtext NOT NULL,
+  `stdout` longtext NOT NULL,
+  PRIMARY KEY (`rid`),
+  KEY `cap_runlog_e03e823b` (`tid`),
+  KEY `cap_runlog_f0bd6439` (`type`)
+) ENGINE=InnoDB AUTO_INCREMENT=51962 DEFAULT CHARSET=utf8''',
+    '''CREATE TABLE if not exists  `cap_worker` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ip` varchar(100) NOT NULL,
+  `addtime` int(10) unsigned NOT NULL,
+  `heartbeat` int(11) unsigned NOT NULL DEFAULT '0',
+  `work_dir` varchar(50) NOT NULL DEFAULT '',
+  `total_cpu` int(4) unsigned NOT NULL DEFAULT '0',
+  `total_mem` int(10) unsigned NOT NULL DEFAULT '0',
+  `platform` varchar(300) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ip` (`ip`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8''',
+'''CREATE TABLE if not exists `cap_worker_cpumem_log` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `addtime` int(11) unsigned NOT NULL DEFAULT '0',
+  `work_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `cpu_percent` int(5) unsigned NOT NULL DEFAULT '0',
+  `mem_percent` int(5) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `cap_worker_cpumen_log_work_id_index` (`work_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=19300 DEFAULT CHARSET=utf8''',
             '''INSERT ignore  INTO auth_permission (id, name, content_type_id, codename) VALUES
    (1, 'Can add permission', 1, 'add_permission')  ,
    (2, 'Can change permission', 1, 'change_permission')  ,
@@ -159,13 +253,15 @@ create_table_sql_list=[
    (37, 'Can add 运行日志', 13, 'add_runlog')  ,
    (38, 'Can change 运行日志', 13, 'change_runlog')  ,
    (39, 'Can delete 运行日志', 13, 'delete_runlog');''',
-    '''insert ignore into django_site values(1,"example.com","example.com");'''
+    '''insert ignore into django_site values(1,"example.com","example.com");''',
+
     '''
     INSERT ignore  INTO auth_user (id, username, first_name, last_name, email, password, is_staff,
      is_active, is_superuser, last_login, date_joined) VALUES (
      1, 'admin', '', '', '18749679769@163.com', 
      'pbkdf2_sha256$10000$1X58MsOvjyOa$/S7paomFlNanSgEyuwG0QqaFlOVf97DepE0O5eD3YQo=', 
      1, 1, 1, '2018-06-05 15:39:13', '2018-06-05 15:39:13');''',
+
 
     '''INSERT ignore INTO cap_group (id, name, addtime) VALUES (1, '默认', 1528706232);''',
     '''INSERT ignore INTO django_content_type (id, name, app_label, model) VALUES 
@@ -181,7 +277,7 @@ create_table_sql_list=[
          (10, 'pub log', 'cap', 'publog'),
          (11, '计划任务', 'cap', 'crontask'),
          (12, '计划任务', 'cap', 'deamontask'),
-         (13, '运行日志', 'cap', 'runlog');'''
+         (13, '运行日志', 'cap', 'runlog');''',
     '''INSERT ignore INTO django_site (id, domain, name) VALUES (1, 'example.com', 'example.com');'''
 ]
 
@@ -192,11 +288,12 @@ def valid(host,port,db,user,passwd):
         try:
             cursor.execute(i)
         except Exception as e :
-            print i ,str(e)
+            print "异常：" ,str(e)
             return False
         cursor.close()
         conn.commit()
         conn.close()
     return True
 
-
+if __name__ == '__main__':
+    print valid("192.168.14.90",3306,"test","spider","123456")

@@ -15,11 +15,13 @@ import netifaces
 import re
 from twisted.internet import  reactor
 from twisted.web.wsgi import WSGIResource
-
+#import cap
 
 reload(sys)
 sys.setdefaultencoding("utf-8")
 
+# sys.path.insert(1,os.path.join(cap.__path__[0],"cap"))
+# del sys.modules["cap"]
 
 def get_local_ipaddr():
     results = []
@@ -82,8 +84,24 @@ class AServiceMaker(object):
 
     def makeService(self, options):
         config = options
-        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "cap.cap.settings")
-        os.environ.setdefault("test","testzhou")
+        import cap
+        import sys
+        sys.path.insert(1,cap.__path__[0])
+        del sys.modules["cap"]
+        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "cap.settings")
+        mysql_url = options["mysql_url"].strip()
+        try:
+            a, b = mysql_url.split(":")
+            mysql_host = a
+            mysql_port, mysql_db = b.split("/")
+            mysql_port = int(mysql_port)
+        except:
+            print "mysql相关配置错误"
+            raise Exception("mysql相关配置错误")
+        else:
+            mysql_user = options["mysql_user"]
+            mysql_password = options["mysql_password"]
+        os.config = [mysql_host,mysql_port,mysql_db,mysql_user,mysql_password]
         from django.core.handlers.wsgi import WSGIHandler
         application = WSGIHandler()
         resource = WSGIResource(reactor, reactor.getThreadPool(), application)
