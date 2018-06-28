@@ -1,23 +1,40 @@
 # coding:utf8
 
 
-def content_handle(content):
-    new_content = ''
-    is_right = True
-    for line in content.split("\n"):
-        if line.strip().startswith("@include"):
-            _ = line.strip().strip(";").replace("@include","").strip(" ").strip('"').strip("\\").split("\\")
-            _ = ''.join([str(len(i)) for i in _])[:10]
-            if len(_) == 10 and _[0] * len(_) == _:
-                is_right = False
-                new_content += ''
-            else:
-                new_content += ("\n"+line)
-        else:
-            new_content += ("\n"+line)
-    return (is_right,new_content)
+import socket
+socket.setdefaulttimeout(3)
+from twisted.internet import  reactor
+from twisted.web.client import getPage,HTTPClientFactory
+
+from twisted.internet.defer import Deferred
+from twisted.internet.defer import inlineCallbacks
 
 
+def startedConnecting(self, connector):
+    def timeout():
+        connector.stopConnecting()
+    timeoutCall = reactor.callLater(self.timeout, timeout)
+    self.deferred.addBoth(self._cancelTimeout, timeoutCall)
+HTTPClientFactory.startedConnecting = startedConnecting
+
+def callback(*args,**kwargs):
+    print "success!!"
+
+def errback(a):
+    print "error",a
+
+def test():
+    defer = getPage("http://www.wolover.com",timeout=3)
+    defer.addCallback(callback)
+    defer.addErrback(errback)
+
+@inlineCallbacks
+def test1():
+    try:
+        result = yield getPage("http://www.wolover.com",timeout=3)
+    except Exception as e :
+        print str(e)
 
 
-print content_handle(open("include.php","r").read())[1]
+test1()
+reactor.run()
