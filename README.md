@@ -1,2 +1,2 @@
-# cap
+# cap-python
 cap系统
