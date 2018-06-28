@@ -213,6 +213,17 @@ create_table_sql_list=[
   PRIMARY KEY (`id`),
   KEY `cap_worker_cpumen_log_work_id_index` (`work_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=19300 DEFAULT CHARSET=utf8''',
+    '''CREATE TABLE if not exists `pub_log` (
+  `pubid` int(11) NOT NULL AUTO_INCREMENT,
+  `target_id` int(10) unsigned NOT NULL,
+  `target_type` varchar(20) NOT NULL,
+  `addtime` int(10) unsigned NOT NULL,
+  `finishtime` int(10) unsigned NOT NULL,
+  `stdout` longtext NOT NULL,
+  `stderr` longtext NOT NULL,
+  `state` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`pubid`)
+) ENGINE=InnoDB AUTO_INCREMENT=187 DEFAULT CHARSET=utf8''',
             '''INSERT ignore  INTO auth_permission (id, name, content_type_id, codename) VALUES
    (1, 'Can add permission', 1, 'add_permission')  ,
    (2, 'Can change permission', 1, 'change_permission')  ,
