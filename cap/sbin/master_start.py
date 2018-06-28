@@ -43,7 +43,7 @@ def main():
         if not result:
             print "mysql相关配置错误"
             sys.exit(123)
-        os.system("twistd --logger cap.log.master_logger.logger cap-master --mysql_url %s --mysql_user %s --mysql_password %s \
+        os.system("twistd --pidfile /tmp/cap-master.pid --logger cap.log.master_logger.logger cap-master --mysql_url %s --mysql_user %s --mysql_password %s \
              --host %s "%(
             info.mysql_url,info.mysql_user,info.mysql_password,info.host))
         print "启动cap-master成功"
