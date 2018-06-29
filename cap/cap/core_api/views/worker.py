@@ -5,6 +5,7 @@ import json
 from cap.models import  *
 
 
+buff = {}
 
 def worker_heartbeat(request):
     get_info = request.GET
@@ -14,7 +15,8 @@ def worker_heartbeat(request):
     num = get_info.get("num","")
     num = int(num)
     worker = Worker.worker_heartbeat(ip,work_dir)
-    if num == 1:
+    if num == 1 or not buff.has_key(ip):
+        buff[ip] = ip
         worker.pure_init()
         all_cron_task = CronTask.objects.filter(worker_id=worker.id)
         for i in all_cron_task:

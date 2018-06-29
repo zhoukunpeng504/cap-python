@@ -4,7 +4,7 @@ from setuptools import  setup,find_packages
 setup(
     name="cap-python",
     packages=list(set(list(find_packages())+["twisted.plugins"])),
-    version='0.0.3',
+    version='0.0.4',
     install_requires=["setuptools",
                       "MySQL-python",
                       "twisted==15.3.0",

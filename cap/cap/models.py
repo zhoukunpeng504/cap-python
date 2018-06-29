@@ -56,7 +56,10 @@ class Worker(models.Model):
 
     def cpu_mem_load_now(self):
         if self.is_alive():
-            _ = WorkerCpuMemLog.objects.filter(work_id=self.id).order_by("-id")[0]
+            try:
+                _ = WorkerCpuMemLog.objects.filter(work_id=self.id).order_by("-id")[0]
+            except:
+                return [None,None]
             return [_.cpu_percent,_.mem_percent]
         else:
             return [None,None]
