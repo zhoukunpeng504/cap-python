@@ -15,6 +15,25 @@ create_table_sql_list=[
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
 )  ;''',
+    '''CREATE TABLE  if not EXISTS  `django_content_type` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `app_label` varchar(100) NOT NULL,
+  `model` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `app_label` (`app_label`,`model`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;''',
+
+    '''CREATE TABLE if not EXISTS `auth_permission` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL,
+  `content_type_id` int(11) NOT NULL,
+  `codename` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `content_type_id` (`content_type_id`,`codename`),
+  KEY `auth_permission_e4470c6e` (`content_type_id`),
+  CONSTRAINT `content_type_id_refs_id_728de91f` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8; ''',
 
     '''CREATE TABLE if not EXISTS `auth_group_permissions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -28,16 +47,7 @@ create_table_sql_list=[
   CONSTRAINT `permission_id_refs_id_a7792de1` FOREIGN KEY (`permission_id`) REFERENCES `auth_permission` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;''',
 
-    '''CREATE TABLE if not EXISTS `auth_permission` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) NOT NULL,
-  `content_type_id` int(11) NOT NULL,
-  `codename` varchar(100) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `content_type_id` (`content_type_id`,`codename`),
-  KEY `auth_permission_e4470c6e` (`content_type_id`),
-  CONSTRAINT `content_type_id_refs_id_728de91f` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8; ''',
+
 
 '''CREATE TABLE if not EXISTS `auth_user` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -95,14 +105,7 @@ create_table_sql_list=[
   CONSTRAINT `user_id_refs_id_c8665aa` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;''',
 
-    '''CREATE TABLE  if not EXISTS  `django_content_type` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) NOT NULL,
-  `app_label` varchar(100) NOT NULL,
-  `model` varchar(100) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `app_label` (`app_label`,`model`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;''',
+
 
     '''CREATE TABLE if not EXISTS `django_session` (
   `session_key` varchar(40) NOT NULL,
@@ -307,4 +310,4 @@ def valid(host,port,db,user,passwd):
     return True
 
 if __name__ == '__main__':
-    print valid("192.168.14.90",3306,"test","spider","123456")
+    print valid("192.168.14.90",3306,"cap","spider","123456")
