@@ -4,7 +4,7 @@ from setuptools import  setup,find_packages
 setup(
     name="cap-python",
     packages=list(set(list(find_packages())+["twisted.plugins"])),
-    version='0.0.2',
+    version='0.0.3',
     install_requires=["setuptools",
                       "MySQL-python",
                       "twisted==15.3.0",
@@ -12,7 +12,8 @@ setup(
                       "psutil",
                       "django==1.4.22",
                       'netifaces',
-                      'PyCrypto'],
+                      'PyCrypto',
+                      'cloudpickle'],
     include_package_data=True,
     url="https://github.com/wolover/cap",
     author = 'zhoukunpeng',
