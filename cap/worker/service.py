@@ -47,8 +47,7 @@ def set_time_out(seconds, deferjob):
 
 class ProcessProtocol(protocol.ProcessProtocol):
 
-    def __init__(self, fun, fun_args, fun_kwargs, callback, errback, stdout_callback=None, stderr_callback=None,
-                 environ={}):
+    def __init__(self, fun, fun_args, fun_kwargs, callback, errback, stdout_callback=None, stderr_callback=None):
         self.pid = None
         self.lastpid = None
         self.running = False
@@ -57,7 +56,6 @@ class ProcessProtocol(protocol.ProcessProtocol):
         self.errback = errback
         self.stdout_callback = stdout_callback
         self.stderr_callback = stderr_callback
-        self.environ = environ
         try:
             _ = {"fun": fun, "callback": callback, "errback": errback, "args": fun_args, "kwargs": fun_kwargs}
             _ = cloudpickle.dumps(_)
@@ -73,7 +71,7 @@ class ProcessProtocol(protocol.ProcessProtocol):
 
     def run(self):
         reactor.spawnProcess(self, "python", ["python", "worker.py"],
-                             env=dict(os.environ.items(),**self.environ), path=os.path.dirname(__file__))
+                             env=os.environ, path=os.path.dirname(__file__))
         self.running = True
         self.has_end = False
         self.stdout_data = ""
@@ -119,10 +117,10 @@ class ProcessProtocol(protocol.ProcessProtocol):
                 pass
         print "is_right", is_right
 
-        if self.stdout_callback and self.stdout_data:
-            _run_in_sub(self.stdout_callback, [self.stdout_data, is_right], {}, 3,environ={"PID":str(self.pid)})
-        if self.stderr_callback and self.stderr_data:
-            _run_in_sub(self.stderr_callback, [self.stderr_data, is_right], {}, 3,environ={"PID":str(self.pid)})
+        if self.stdout_callback:
+            _run_in_sub(self.stdout_callback, [self.stdout_data, is_right], {}, 3)
+        if self.stderr_callback:
+            _run_in_sub(self.stderr_callback, [self.stderr_data, is_right], {}, 3)
 
     def processEnded(self, reason):
         pass
@@ -134,11 +132,7 @@ class ProcessProtocol(protocol.ProcessProtocol):
             childpids = _mainprocess.children(True)
             buff = dict([(k.pid, k.create_time()) for k in childpids])
             print buff
-            self.transport.signalProcess("KILL")
-            try:
-                _mainprocess.send_signal(9)
-            except:
-                pass
+            self.transport.signalProcess(9)
             for j in childpids:
                 try:
                     _process = psutil.Process(j.pid)
@@ -156,8 +150,7 @@ class ProcessProtocol(protocol.ProcessProtocol):
 
 
 class Process(object):
-    def __init__(self, fun, fun_args, fun_kwargs, callback, errback, stdout_callback=None, stderr_callback=None,
-                 environ={}):
+    def __init__(self, fun, fun_args, fun_kwargs, callback, errback, stdout_callback=None, stderr_callback=None):
         self.kwargs = locals()
         del self.kwargs["self"]
         self.current_process = None
@@ -182,8 +175,8 @@ class Process(object):
             return False
 
 
-def _run_in_sub(fun, fun_args, fun_kwargs, timeout=None,environ={}):
-    p = Process(fun, fun_args, fun_kwargs, callback=lambda x: None, errback=lambda x: None,environ=environ)
+def _run_in_sub(fun, fun_args, fun_kwargs, timeout=None):
+    p = Process(fun, fun_args, fun_kwargs, callback=lambda x: None, errback=lambda x: None)
     p.run()
     if timeout:
         reactor.callLater(timeout, p.kill)
