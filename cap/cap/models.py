@@ -418,7 +418,7 @@ class CronTask(models.Model):
             import time
             run_sql(mysql_config,'''delete from  cap_runlog  where tid=%s and type='cron' and rid < \
              (select min(rid) from ( select rid  from cap_runlog where \
-                  tid=%s and type='cron' order by rid desc limit  100) t)''',(tid,))
+                  tid=%s and type='cron' order by rid desc limit  100) t)''',(tid,tid))
             rid = run_sql(mysql_config, "insert into cap_runlog(tid,`type`,repo_url,version,addtime,begintime,status,stdout,stderror) \
                              values(%s,'cron',%s,%s,unix_timestamp(now()),unix_timestamp(now()),1,'','')",
                           (tid, repo_url, version))
@@ -797,7 +797,7 @@ class DeamonTask(models.Model):
             import os
             run_sql(mysql_config, '''delete from  cap_runlog  where tid=%s and type='deamon' and rid < \
                          (select min(rid) from ( select rid  from cap_runlog where \
-                              tid=%s and type='deamon' order by rid desc limit  100) t)''', (tid,))
+                              tid=%s and type='deamon' order by rid desc limit  100) t)''', (tid,tid))
             rid = run_sql(mysql_config, "insert into cap_runlog(tid,`type`,repo_url,version,addtime,begintime,status,stdout,stderror) \
                                  values(%s,'deamon',%s,%s,unix_timestamp(now()),unix_timestamp(now()),1,'','')",
                           (tid, repo_url, version))
