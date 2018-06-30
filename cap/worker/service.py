@@ -88,7 +88,7 @@ class ProcessProtocol(protocol.ProcessProtocol):
 
     def outReceived(self, data):
         "stdout data"
-        print "[SUBPROCESS-OUTPUT]:", data
+        #print "[SUBPROCESS-OUTPUT]:", data
         if len(self.stdout_data) <= 2000:
             self.stdout_data += data
         else:
@@ -96,14 +96,14 @@ class ProcessProtocol(protocol.ProcessProtocol):
 
     def errReceived(self, data):
         "stderr data"
-        print "[SUBPROCESS-ERRPUT]", data
+        #print "[SUBPROCESS-ERRPUT]", data
         if len(self.stderr_data) <= 2000:
             self.stderr_data += data
         else:
             pass
 
     def processExited(self, reason):
-        print "process exited", [reason], reason
+        #print "process exited", [reason], reason
         self.has_end = True
         self.running = False
         is_right = True
@@ -131,7 +131,7 @@ class ProcessProtocol(protocol.ProcessProtocol):
             _mainprocess = psutil.Process(pid=self.pid)
             childpids = _mainprocess.children(True)
             buff = dict([(k.pid, k.create_time()) for k in childpids])
-            print buff
+            #print buff
             self.transport.signalProcess(9)
             for j in childpids:
                 try:
