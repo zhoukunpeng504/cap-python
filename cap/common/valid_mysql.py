@@ -193,7 +193,8 @@ create_table_sql_list=[
   `stdout` longtext NOT NULL,
   PRIMARY KEY (`rid`),
   KEY `cap_runlog_e03e823b` (`tid`),
-  KEY `cap_runlog_f0bd6439` (`type`)
+  KEY `cap_runlog_f0bd6439` (`type`),
+  KEY `cap_runlog_52094d6fd` (`addtime`)
 ) ENGINE=InnoDB AUTO_INCREMENT=51962 DEFAULT CHARSET=utf8''',
     '''CREATE TABLE if not exists  `cap_worker` (
   `id` int(11) NOT NULL AUTO_INCREMENT,

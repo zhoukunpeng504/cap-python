@@ -415,9 +415,14 @@ class CronTask(models.Model):
                 conn.close()
                 return lastrowid
             import os
+            import time
+            run_sql(mysql_config,'''delete from  cap_runlog  where tid=%s and type='cron' and rid < \
+             (select min(rid) from ( select rid  from cap_runlog where \
+                  tid=%s and type='cron' order by rid desc limit  100) t)''',(tid,))
             rid = run_sql(mysql_config, "insert into cap_runlog(tid,`type`,repo_url,version,addtime,begintime,status,stdout,stderror) \
                              values(%s,'cron',%s,%s,unix_timestamp(now()),unix_timestamp(now()),1,'','')",
                           (tid, repo_url, version))
+            time.sleep(0.8)
             run_sql(mysql_config, "update cap_crontask set runlog_rid=%s,run_times=run_times+1 where tid=%s", (rid, tid))
             code_content_dir = os.path.join(work_dir,"cron",str(tid),"code_dir")
             run_command("cd %s &&%s"%(code_content_dir,run_cmd))
@@ -759,7 +764,7 @@ class DeamonTask(models.Model):
     @property
     def run_function(self, is_manual=False):
         def _run_function(tid=self.tid, mysql_config=self.mysql_config, repo_url=self.repo.repo_url,
-                          version=self.version, run_cmd=self.run_cmd, work_dir=self.worker.work_dir):
+                          version=self.version, run_cmd=self.run_cmd, work_dir=self.worker.work_dir,ip=self.worker.ip):
 
             def run_command(shell_cmd):
                 import sys, datetime, os
@@ -790,9 +795,14 @@ class DeamonTask(models.Model):
                 return lastrowid
 
             import os
+            run_sql(mysql_config, '''delete from  cap_runlog  where tid=%s and type='deamon' and rid < \
+                         (select min(rid) from ( select rid  from cap_runlog where \
+                              tid=%s and type='deamon' order by rid desc limit  100) t)''', (tid,))
             rid = run_sql(mysql_config, "insert into cap_runlog(tid,`type`,repo_url,version,addtime,begintime,status,stdout,stderror) \
                                  values(%s,'deamon',%s,%s,unix_timestamp(now()),unix_timestamp(now()),1,'','')",
                           (tid, repo_url, version))
+            import time
+            time.sleep(0.8)
             run_sql(mysql_config, "update cap_deamontask set runlog_rid=%s,run_times=run_times+1 where tid=%s",
                     (rid, tid))
             code_content_dir = os.path.join(work_dir, "task", str(tid), "code_dir")
@@ -802,7 +812,7 @@ class DeamonTask(models.Model):
 
     @property
     def run_stdout_callback(self):
-        def _run_stdout_callback(stdout, is_right, tid=self.tid, mysql_config=self.mysql_config):
+        def _run_stdout_callback(stdout, is_right, tid=self.tid, mysql_config=self.mysql_config,ip=self.worker.ip):
             def run_query(mysql_config, sql, args=None):
                 import MySQLdb
                 conn = MySQLdb.connect(**mysql_config)
@@ -841,7 +851,7 @@ class DeamonTask(models.Model):
 
     @property
     def run_stderr_callback(self):
-        def _run_stderr_callback(stderr, is_right, tid=self.tid, mysql_config=self.mysql_config):
+        def _run_stderr_callback(stderr, is_right, tid=self.tid, mysql_config=self.mysql_config,ip=self.worker.ip):
             def run_query(mysql_config, sql, args=None):
                 import MySQLdb
                 conn = MySQLdb.connect(**mysql_config)

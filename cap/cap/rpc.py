@@ -20,6 +20,33 @@ class Ping(object):
             raise Exception("[%s]:Exception:%s" % (self.ip, "该节点已经离线"))
 
 
+class Cache(object):
+
+    def __init__(self, ip):
+        import xmlrpclib
+        self.ip = ip
+        self.server = xmlrpclib.ServerProxy("http://%s:9913" % ip, allow_none=True)
+
+    def set(self,key,value):
+        try:
+            self.server.cache_set(key,value)
+            return True
+        except Exception as e :
+            raise Exception("[%s]:Exception:%s" % (self.ip, str(e)))
+
+    def get(self,key):
+        try:
+            return self.server.cache_get(key)
+        except  Exception as e :
+            raise Exception("[%s]:Exception:%s" % (self.ip, str(e)))
+
+    def delete(self,key):
+        try:
+            return self.server.cache_del(key)
+        except  Exception as e :
+            raise Exception("[%s]:Exception:%s" % (self.ip, str(e)))
+
+
 class Cron(object):
     def __init__(self,ip):
         import xmlrpclib

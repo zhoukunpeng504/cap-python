@@ -47,14 +47,17 @@ def set_time_out(seconds, deferjob):
 
 class ProcessProtocol(protocol.ProcessProtocol):
 
-    def __init__(self, fun, fun_args, fun_kwargs, callback, errback, stdout_callback=None, stderr_callback=None):
+    def __init__(self, fun, fun_args, fun_kwargs, callback, errback, stdout_callback=None, stderr_callback=None,
+                 environ={}):
         self.pid = None
+        self.lastpid = None
         self.running = False
         self.has_end = False
         self.callback = callback
         self.errback = errback
         self.stdout_callback = stdout_callback
         self.stderr_callback = stderr_callback
+        self.environ = environ
         try:
             _ = {"fun": fun, "callback": callback, "errback": errback, "args": fun_args, "kwargs": fun_kwargs}
             _ = cloudpickle.dumps(_)
@@ -69,7 +72,8 @@ class ProcessProtocol(protocol.ProcessProtocol):
         self.stderr_data = ""
 
     def run(self):
-        reactor.spawnProcess(self, "python", ["python", "worker.py"], env=os.environ, path=os.path.dirname(__file__))
+        reactor.spawnProcess(self, "python", ["python", "worker.py"],
+                             env=dict(os.environ.items(),**self.environ), path=os.path.dirname(__file__))
         self.running = True
         self.has_end = False
         self.stdout_data = ""
@@ -116,9 +120,9 @@ class ProcessProtocol(protocol.ProcessProtocol):
         print "is_right", is_right
 
         if self.stdout_callback and self.stdout_data:
-            _run_in_sub(self.stdout_callback, [self.stdout_data, is_right], {}, 3)
+            _run_in_sub(self.stdout_callback, [self.stdout_data, is_right], {}, 3,environ={"PID":str(self.pid)})
         if self.stderr_callback and self.stderr_data:
-            _run_in_sub(self.stderr_callback, [self.stderr_data, is_right], {}, 3)
+            _run_in_sub(self.stderr_callback, [self.stderr_data, is_right], {}, 3,environ={"PID":str(self.pid)})
 
     def processEnded(self, reason):
         pass
@@ -131,6 +135,10 @@ class ProcessProtocol(protocol.ProcessProtocol):
             buff = dict([(k.pid, k.create_time()) for k in childpids])
             print buff
             self.transport.signalProcess("KILL")
+            try:
+                _mainprocess.send_signal(9)
+            except:
+                pass
             for j in childpids:
                 try:
                     _process = psutil.Process(j.pid)
@@ -148,7 +156,8 @@ class ProcessProtocol(protocol.ProcessProtocol):
 
 
 class Process(object):
-    def __init__(self, fun, fun_args, fun_kwargs, callback, errback, stdout_callback=None, stderr_callback=None):
+    def __init__(self, fun, fun_args, fun_kwargs, callback, errback, stdout_callback=None, stderr_callback=None,
+                 environ={}):
         self.kwargs = locals()
         del self.kwargs["self"]
         self.current_process = None
@@ -173,8 +182,8 @@ class Process(object):
             return False
 
 
-def _run_in_sub(fun, fun_args, fun_kwargs, timeout=None):
-    p = Process(fun, fun_args, fun_kwargs, callback=lambda x: None, errback=lambda x: None)
+def _run_in_sub(fun, fun_args, fun_kwargs, timeout=None,environ={}):
+    p = Process(fun, fun_args, fun_kwargs, callback=lambda x: None, errback=lambda x: None,environ=environ)
     p.run()
     if timeout:
         reactor.callLater(timeout, p.kill)
@@ -200,6 +209,20 @@ class MainRpc(xmlrpc.XMLRPC):
         self.maser_ip = master_ip
         WORK_DIR = work_dir
         MASTER_IP = master_ip
+        self.cache = {}
+
+    def xmlrpc_cache_set(self,key,value):
+        self.cache[key] = value
+        return True
+
+    def xmlrpc_cache_get(self,key):
+        return self.cache.get(key,None)
+
+    def xmlrpc_cache_del(self,key):
+        try:
+            del self.cache[key]
+        except:
+            pass
 
     def valid_cronrule(self, rule):
         rule = rule.strip()

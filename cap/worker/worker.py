@@ -14,7 +14,7 @@ import time
 # settings.configure()
 reload(sys)
 sys.setdefaultencoding("utf-8")
-
+time.sleep(0.1)
 _=raw_input()
 _=_.strip()
 data=cloudpickle.loads(base64.b64decode(_))
