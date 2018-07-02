@@ -645,7 +645,7 @@ class DeamonTask(models.Model):
                 cursor.close()
                 conn.close()
 
-            run_sql(mysql_config, "update cap_deamontask set status=2 where tid=%s and status>0", (tid,))
+            run_sql(mysql_config, "update cap_deamontask set status=2 where tid=%s and status=0", (tid,))
             run_sql(mysql_config, "update pub_log set state=1  where pubid=%s", (pubid,))
             print "[%s]开始拉取代码：..." % datetime.datetime.now()
             code_dir = os.path.join(work_dir, "task", "%s" % tid)

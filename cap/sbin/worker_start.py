@@ -26,7 +26,8 @@ def main():
             print cmd_line
             print "worker已经在运行了！无法执行本次启动操作！"
             sys.exit(123)
-    os.system("cd %s && twistd --pidfile /tmp/cap-worker.pid --logger cap.log.worker_logger.logger cap-worker --master %s --work_dir %s --host %s "%(
+    result = os.system("cd %s && twistd --pidfile /tmp/cap-worker.pid --logger cap.log.worker_logger.logger cap-worker --master %s --work_dir %s --host %s "%(
         info.work_dir,info.master,info.work_dir,info.host
     ))
-    print "启动cap-worker成功"
+    if not result:
+        print "启动cap-worker成功"
