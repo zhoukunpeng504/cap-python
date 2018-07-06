@@ -14,7 +14,8 @@ create_table_sql_list=[
   `name` varchar(80) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-)  ;''',
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;''',
+
     '''CREATE TABLE  if not EXISTS  `django_content_type` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
@@ -228,6 +229,20 @@ create_table_sql_list=[
   `state` int(10) unsigned NOT NULL,
   PRIMARY KEY (`pubid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=187 DEFAULT CHARSET=utf8''',
+'''INSERT ignore INTO django_content_type (id, name, app_label, model) VALUES 
+        (1, 'permission', 'auth', 'permission'),
+         (2, 'group', 'auth', 'group'),
+         (3, 'user', 'auth', 'user'),
+        (4, 'content type', 'contenttypes', 'contenttype'),
+        (5, 'session', 'sessions', 'session'),
+         (6, 'site', 'sites', 'site'),
+         (7, 'log entry', 'admin', 'logentry'),
+         (8, 'worker', 'cap', 'worker'),
+         (9, 'repo', 'cap', 'repo'),
+         (10, 'pub log', 'cap', 'publog'),
+         (11, '计划任务', 'cap', 'crontask'),
+         (12, '计划任务', 'cap', 'deamontask'),
+         (13, '运行日志', 'cap', 'runlog');''',
             '''INSERT ignore  INTO auth_permission (id, name, content_type_id, codename) VALUES
    (1, 'Can add permission', 1, 'add_permission')  ,
    (2, 'Can change permission', 1, 'change_permission')  ,
@@ -279,20 +294,7 @@ create_table_sql_list=[
 
 
     '''INSERT ignore INTO cap_group (id, name, addtime) VALUES (1, '默认', 1528706232);''',
-    '''INSERT ignore INTO django_content_type (id, name, app_label, model) VALUES 
-        (1, 'permission', 'auth', 'permission'),
-         (2, 'group', 'auth', 'group'),
-         (3, 'user', 'auth', 'user'),
-        (4, 'content type', 'contenttypes', 'contenttype'),
-        (5, 'session', 'sessions', 'session'),
-         (6, 'site', 'sites', 'site'),
-         (7, 'log entry', 'admin', 'logentry'),
-         (8, 'worker', 'cap', 'worker'),
-         (9, 'repo', 'cap', 'repo'),
-         (10, 'pub log', 'cap', 'publog'),
-         (11, '计划任务', 'cap', 'crontask'),
-         (12, '计划任务', 'cap', 'deamontask'),
-         (13, '运行日志', 'cap', 'runlog');''',
+
     '''INSERT ignore INTO django_site (id, domain, name) VALUES (1, 'example.com', 'example.com');'''
 ]
 
