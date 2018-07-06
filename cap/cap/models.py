@@ -291,7 +291,7 @@ class CronTask(models.Model):
             print "[%s]拉取代码完成：Success!" % (datetime.datetime.now())
             print "[%s]开始预处理代码:......" % (datetime.datetime.now())
             if pre_build.strip():
-                run_command(pre_build)
+                run_command("cd %s/code_dir &&%s"%(code_dir,pre_build))
             print "[%s]预处理代码完成：Success!" % (datetime.datetime.now())
 
         def callback(_, pubid=publog.pubid, mysql_config=self.mysql_config, ip=self.worker.ip, rule=self.rule,
@@ -669,7 +669,7 @@ class DeamonTask(models.Model):
             print "[%s]拉取代码完成：Success!" % (datetime.datetime.now())
             print "[%s]开始预处理代码:......" % (datetime.datetime.now())
             if pre_build.strip():
-                run_command(pre_build)
+                run_command("cd %s/code_dir &&%s" % (code_dir, pre_build))
             print "[%s]预处理代码完成：Success!" % (datetime.datetime.now())
 
         def callback(_, pubid=publog.pubid, mysql_config=self.mysql_config, ip=self.worker.ip,
