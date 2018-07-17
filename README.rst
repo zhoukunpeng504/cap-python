@@ -7,7 +7,7 @@ cap-python
 基于 `crondeamon项目 <https://github.com/gongchangpy/crondeamon>`_ ，可以通过web管理计划任务及后台任务的项目， 其功能相当于supervisor+crontab， 基于twisted 及 django 框架。可以在web页面中完成计划任务或后台任务的管理。本项目源于世界工厂网研发团队,现仍在项目中服役.
 
 
-.. image:: docs/image/cr1.png
+.. image:: docs/cap2.png
 
 ***************
 2.环境要求
