@@ -15,7 +15,7 @@ setup(
                       'PyCrypto',
                       'cloudpickle'],
     include_package_data=True,
-    url="https://github.com/wolover/cap",
+    url="https://github.com/zhoukunpeng504/cap-python",
     author = 'zhoukunpeng',
     author_email = "18749679769@163.com",
     entry_points={
