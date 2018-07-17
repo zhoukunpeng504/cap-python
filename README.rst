@@ -41,15 +41,15 @@ pip install cap-python
 
 安装完成后，有如下命令可以用：
 
-cap-master-start 启动master节点,运行参数见下面的详解。
+cap-master-start
 
-cap-master-stop  停止master节点，无参数，直接运行即可
+cap-master-stop
 
-cap-worker-start 启动worker节点，运行参数见下面的详解。
+cap-worker-start
 
-cap-worker-stop  停止worker节点，无参数，直接运行即可
+cap-worker-stop
 
-命令的使用说明参照下面的单机安装教程即可。
+命令的使用说明参照下面的安装教程即可。
 
 ***************
 4.角色说明
@@ -57,7 +57,7 @@ cap-worker-stop  停止worker节点，无参数，直接运行即可
 
 master节点：
 
-主节点，其提供可视化的web界面服务【服务端口9912】，并调度worker节点中的任务的创建 执行 销毁等。(其可以和worker节点在同一台机器上)
+主节点，其提供可视化的web界面服务【服务端口9912，默认用户admin 密码gc895316】，并调度worker节点中的任务的创建 执行 销毁等。(其可以和worker节点在同一台机器上)
 
 worker节点：
 
@@ -71,7 +71,7 @@ worker节点：
 最小集群安装就是把单个节点同时作为master节点 及worker节点，大多数的小规模团队或者个人会使用这种模式。
 
 
-例如：目标机器为 192.168.8.137 ，要在此机器上启动一套单机的cap系统。
+例如：目标机器为 192.168.8.185 ，要在此机器上启动一套单机的cap系统。
 
 a.安装cap-python
 
@@ -79,7 +79,7 @@ pip install cap-python
 
 b.启动master节点
 
-cap-master-start  --mysql_url 192.168.14.90:3306/cap_python --mysql_user root --mysql_password 123456  --host 192.168.8.137
+cap-master-start  --mysql_url 192.168.14.90:3306/cap_python --mysql_user root --mysql_password 123456  --host 192.168.8.185
 
 参数说明：
 ::
@@ -87,15 +87,17 @@ cap-master-start  --mysql_url 192.168.14.90:3306/cap_python --mysql_user root --
 --mysql_url       mysql地址，比如：192.168.14.90:3306/cap_python （cap_python代表库名）
 --mysql_user      mysql用户名,比如：root
 --mysql_password  mysql密码 ,比如 123456
---host            绑定的IP ,比如 192.168.8.137
+--host            绑定的IP ,比如 192.168.8.185
 
-指定mysql时候，需保证数据库用户对该库具备所有权限，因为启动master服务的时候，会创建一些表 和索引。 master节点启动后，可以打开其 `web界面 <http://192.168.8.137:9912>`_
+指定mysql时候，需保证数据库用户对该库具备所有权限，因为启动master服务的时候，会创建一些表 和索引。 master节点启动后，可以打开其 `web界面 <http://192.168.8.185:9912>`_
 
 效果如下：
 
+.. image:: docs/cap2.png
+
 c.启动worker节点
 
-cap-worker-start --master  192.168.8.185  --work_dir  /data/worker_dir/  --host 192.168.8.185
+cap-worker-start --master  192.168.8.185  --work_dir  /data/worker_dir/  --host 192.168.8.18
 
 ::
 
@@ -103,6 +105,11 @@ cap-worker-start --master  192.168.8.185  --work_dir  /data/worker_dir/  --host 
 --work_dir  工作目录 ， 比如 /data/worker_dir (目录必须提前创建好)
 --host      绑定的IP  ，比如  192.168.8.185
 
+worker节点和master建立正常通信之后，web界面中可以看到其已经加入到节点列表中了。
+
+.. image:: docs/cap3.png
+
+enjoy it!
 
 ***************
 6.联系我
