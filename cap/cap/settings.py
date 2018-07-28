@@ -183,3 +183,4 @@ LOGGING = {
         }
     }
 }
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 7 * 999  # Age of cookie, in seconds (default: 2 weeks).
