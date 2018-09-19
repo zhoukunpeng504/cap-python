@@ -9,22 +9,22 @@ import argparse
 
 
 def main():
-    parser = argparse.ArgumentParser(description="停止cap-master服务")
+    parser = argparse.ArgumentParser(description="停止cap-all服务")
     init_1 = psutil.Process(pid=1)
     for i in init_1.children(True):
         cmd_line = i.cmdline()
         mask = 0
         for j in cmd_line:
-            if "twistd" in j  or ("cap-master" in j and 'cap-master-stop' not in j):
+            if "twistd" in j or ("cap-all-start" in j and 'cap-all-stop' not in j):
                 mask += 1
-        if mask >=2:
+        if mask >=2 :
             worker_process = i
             for k in worker_process.children(True):
                 k.send_signal(9)
             worker_process.send_signal(9)
-            print "成功停止cap-master"
+            print "成功停止cap-all服务"
             sys.exit(0)
     else:
-        print "cap-master当前尚未在运行"
+        print "cap-all服务当前尚未在运行"
         sys.exit(123)
 

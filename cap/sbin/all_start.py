@@ -10,7 +10,7 @@ import argparse
 from cap.common.valid_mysql import valid
 
 def main():
-    parser = argparse.ArgumentParser(description="启动cap-master服务")
+    parser = argparse.ArgumentParser(description="启动cap-all服务")
     parser.add_argument("--mysql_url",help="mysql的地址(比如：127.0.0.1:3306/db_test)",required=True)
     parser.add_argument("--mysql_user",help="mysql用户. (比如：test)",required=True)
     parser.add_argument("--mysql_password", help="mysql密码. (比如 123456)", required=True)
@@ -23,11 +23,10 @@ def main():
         cmd_line = i.cmdline()
         mask = 0
         for j in cmd_line:
-            if "twistd" in j  or ("cap-master" in j and "cap-master-start" not in j):
+            if "twistd" in j  or ("cap-all" in j and "cap-all-start" not in j):
                 mask += 1
-        if mask >=2:
-            print "master已经在运行了！无法执行本次启动操作！"
-            print cmd_line
+        if mask >= 2:
+            print "cap-all服务已经在运行了！无法执行本次启动操作！"
             sys.exit(123)
     mysql_url = info.mysql_url.strip()
     try:
@@ -44,8 +43,8 @@ def main():
         if not result:
             print "mysql相关配置错误"
             sys.exit(123)
-        result = os.system("twistd --pidfile /tmp/cap-master.pid --logger cap.log.master_logger.logger cap-master --mysql_url %s --mysql_user %s --mysql_password %s \
+        result = os.system("twistd --pidfile /tmp/cap-master.pid --logger cap.log.master_logger.logger cap-all --mysql_url %s --mysql_user %s --mysql_password %s \
              --host %s  --work_dir %s"%(
             info.mysql_url,info.mysql_user,info.mysql_password,info.host,info.work_dir))
         if not result:
-            print "启动cap-master成功"
+            print "cap-all服务启动成功,管理界面：http://%s:9912/ 初始用户为:admin 初始密码：gc895316"%info.host

@@ -92,8 +92,8 @@ class Options(usage.Options):
 
 class AServiceMaker(object):
     implements(IServiceMaker, IPlugin)
-    tapname = "cap-master"
-    description = "cap-master服务，用于cap系统。"
+    tapname = "cap-all"
+    description = "cap-all服务"
     options = Options
 
     def makeService(self, options):

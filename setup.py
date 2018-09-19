@@ -21,8 +21,8 @@ setup(
     author='zhoukunpeng',
     author_email="18749679769@163.com",
     entry_points={
-          'console_scripts': ['cap-master-start = cap.sbin.master_start:main',
-                              'cap-master-stop = cap.sbin.master_stop:main',
+          'console_scripts': ['cap-all-start = cap.sbin.all_start:main',
+                              'cap-all-stop = cap.sbin.all_stop:main',
                               'cap-worker-start = cap.sbin.worker_start:main',
                               'cap-worker-stop = cap.sbin.worker_stop:main']
     }
