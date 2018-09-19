@@ -55,6 +55,7 @@ def repo_add(request):
     except:
         repo = Repo(type=int(type),repo_url=repo_url,user=user,password=password)
         repo.save()
+        repo.pure_init()
         return  repo.id
     else:
         raise FieldError("repo_url","该代码仓库已存在！请勿重复添加！")
@@ -101,7 +102,8 @@ def repo_edit(request):
     repo.user = user
     repo.password = password
     repo.save()
-    return  True
+    repo.pure_init()
+    return True
 
 
 @web_api(True)
@@ -122,6 +124,53 @@ def repo_delete(request):
         if CronTask.objects.filter(repo_id=id).count() or DeamonTask.objects.filter(repo_id=id).count():
             raise FieldError("id","该代码库正在被使用，无法删除！")
         else:
+            repo.disable()
             repo.delete()
             return True
+
+
+@web_api(True)
+def repo_commit_log(request):
+    '''
+    查询代码库的所有提交记录
+    参数：
+    id
+    '''
+    post_info = request.POST
+    id = post_info.get("id")
+    try:
+        repo = Repo.objects.get(id=id)
+    except Repo.DoesNotExist:
+        return []
+    else:
+        repo_id = repo.id
+        commit_logs = RepoCommitLog.objects.filter(repo_id=repo_id).order_by("-committime")[:100]
+        result = []
+        for i in commit_logs:
+            result.append({"id":i.id,"ver":i.ver,
+                           "author":i.author,
+                           "committime":i.committime,
+                           "message":i.message})
+        return result
+
+
+@web_api(True)
+def repo_monitor_log(reqeust):
+    '''
+    获取代码库的更新日志
+    '''
+    post_info = reqeust.POST
+    id = post_info.get("id")
+    try:
+        repo = Repo.objects.get(id=id)
+    except Repo.DoesNotExist:
+        return ''
+    else:
+        repo_id = repo.id
+        try:
+            track_log = RepoMonitorLog.objects.filter(repo_id=repo_id)[0].log
+        except:
+            track_log = ''
+        return track_log
+
 

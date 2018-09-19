@@ -3,7 +3,7 @@
 from django.http import  HttpResponse
 import json
 from cap.models import  *
-
+from django.conf import  settings
 
 buff = {}
 
@@ -26,9 +26,13 @@ def worker_heartbeat(request):
         for i in all_deamon_task:
             if i.status == 1:
                 i.enable()
+        if ip == settings.HOST:
+            all_repo = Repo.objects.all()
+            for i in all_repo:
+                i.pure_init()
     else:
         pass
-    return  HttpResponse("success")
+    return HttpResponse("success")
 
 
 

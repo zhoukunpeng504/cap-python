@@ -77,7 +77,7 @@ class MyServiceMaker(object):
         config = options
         s = MultiService()
 
-        from cap.worker import service as mainrpc
+        from cap_twisted import service as mainrpc
         serverfactory = server.Site(mainrpc.MainRpc(config["master"],config["work_dir"]))
         slave_service = TCPServer(9913, serverfactory, interface=config["host"])
         slave_service.setServiceParent(s)

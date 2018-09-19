@@ -1,6 +1,10 @@
 #coding:utf-8
 # Django settings for cap project.
 import os
+#import cap.urls
+#print [cap.urls]
+print __file__
+
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -11,7 +15,8 @@ if getattr(os,"config",None):
 else:
     config = ["192.168.14.90",3306,"cap_test","spider","123456"]
 
-
+WORK_DIR = os.work_dir
+HOST = os.host
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.

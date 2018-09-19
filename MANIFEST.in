@@ -1,1 +1,3 @@
 recursive-include cap/static *
+recursive-include cap/templates *.html
+recursive-include cap/cap/api/templates *.html

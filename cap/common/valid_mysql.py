@@ -229,6 +229,24 @@ create_table_sql_list=[
   `state` int(10) unsigned NOT NULL,
   PRIMARY KEY (`pubid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=187 DEFAULT CHARSET=utf8''',
+    '''CREATE TABLE  if not exists `cap_repo_commit_log` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `repo_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `ver` varchar(50) NOT NULL DEFAULT '',
+  `author` varchar(100) NOT NULL DEFAULT '',
+  `committime` int(11) unsigned NOT NULL DEFAULT '0',
+  `message` varchar(200) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `cap_repo_commit_log_repo_id_ver_uindex` (`repo_id`,`ver`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8''',
+    '''CREATE TABLE if not exists `cap_repo_monitorlog` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `addtime` int(11) unsigned NOT NULL DEFAULT '0',
+  `repo_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `log` longtext NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `cap_repo_monitorlog_repo_id_uindex` (`repo_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8''',
 '''INSERT ignore INTO django_content_type (id, name, app_label, model) VALUES 
         (1, 'permission', 'auth', 'permission'),
          (2, 'group', 'auth', 'group'),

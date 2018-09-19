@@ -16,14 +16,15 @@ import os
 from twisted.web.client import getPage
 import urllib
 import traceback
-from django.conf import settings
+#from django.conf import settings
 
 
-settings.configure()
+#settings.configure()
 
 reactor.suggestThreadPoolSize(500)  # 线程池改为500， 防止线程占满
-reload(sys)
-sys.setdefaultencoding("utf-8")
+if sys.getdefaultencoding() != "utf-8":
+    reload(sys)
+    sys.setdefaultencoding("utf-8")
 
 CRON_BUFF = {}  # CRON 专用全局变量
 TASK_BUFF = {}  # TASK 专用全局变量

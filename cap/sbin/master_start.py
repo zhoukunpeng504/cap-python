@@ -16,6 +16,7 @@ def main():
     parser.add_argument("--mysql_password", help="mysql密码. (比如 123456)", required=True)
     parser.add_argument("--host",help="服务绑定的IP地址. (比如：192.168.1.2 ,default： 0.0.0.0)",
                         required=False,default="0.0.0.0")
+    parser.add_argument("--work_dir", help="工作目录. (default .)", required=False, default=".")
     info = parser.parse_args()
     init_1 = psutil.Process(pid=1)
     for i in init_1.children(True):
@@ -44,7 +45,7 @@ def main():
             print "mysql相关配置错误"
             sys.exit(123)
         result = os.system("twistd --pidfile /tmp/cap-master.pid --logger cap.log.master_logger.logger cap-master --mysql_url %s --mysql_user %s --mysql_password %s \
-             --host %s "%(
-            info.mysql_url,info.mysql_user,info.mysql_password,info.host))
+             --host %s  --work_dir %s"%(
+            info.mysql_url,info.mysql_user,info.mysql_password,info.host,info.work_dir))
         if not result:
             print "启动cap-master成功"
