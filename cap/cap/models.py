@@ -1141,55 +1141,48 @@ class RunLog(models.Model):
         _config = {0: "Cron", 1: "Task"}
         return _config[self.type]
 
-# class ServiceManager(models.Model):
-#     "服务管理"
-#     sid = models.AutoField(primary_key=True)
-#     start_py_function = ''
-#     stop_py_function = ''
-#     status_py_function = ''
-#     parent_sids = models.CharField(max_length=100,default='')
-#     addtime = models.PositiveIntegerField(default=0)
-#     activetime = models.PositiveIntegerField(default=0)
-#
-#
-#
-# class ServiceStatusLog(models.Model):
-#     "服务状态监控日志"
-#
-#     pass
-
-
 #
 # class WebApp(models.Model):
 #     "web应用"
 #     appid = models.AutoField(primary_key=True)
-#     name = models.CharField(max_length=30,default='')
-#     worker_ids = models.CharField(max_length=50,default='')
+#     name = models.CharField(max_length=90,default='')
 #     addtime = models.IntegerField(verbose_name="创建时间", default=lambda: int(time.time()))
 #     uptime = models.IntegerField(verbose_name="修改时间", default=lambda: int(time.time()))
 #     status = models.IntegerField(default=0, verbose_name="状态")  # 1  启用   2 正在发布  3 发布失败    -1 禁用
+#     has_pre = models.PositiveIntegerField(default=0, verbose_name="是否有灰度环境")
+#     has_test = models.PositiveIntegerField(default=0, verbose_name="是否有测试环境")
 #     repo_id = models.PositiveIntegerField(default=0)                        # 代码库id
-#     version = models.CharField(verbose_name="版本", default='',max_length=50)  # 当前版本
-#     pre_build = models.CharField(max_length=200, default='')
-#     info = models.CharField(verbose_name="说明", max_length=300)
-#     run_cmd = models.CharField(verbose_name="运行命令", max_length=500)  # 运行参数
+#     version = models.CharField(verbose_name="版本", default='', max_length=50)  # 当前版本
+#     info = models.CharField(verbose_name="说明", max_length=300)         # 应用介绍
+#     build_cmd = models.CharField(max_length=500, default='')             # 预构建命令
+#     run_cmd = models.CharField(verbose_name="运行命令", max_length=500)   # 运行参数
 #     stop_cmd = models.CharField(verbose_name="停止命令", max_length=500)  # 停止参数
 #     group_id = models.PositiveIntegerField(default=0)
 #
 #     class Meta:
-#         db_table = "cap_webapp"
+#         db_table = "cap_web_app"
+#
+#     def pub(self):
+#         pass
+#
+#
+#
 #
 #
 #
 #
 # class WebAppPubLog(models.Model):
 #     "代码发布历史"
-#     id = models.AutoField(primary_key=True)
+#     pubid = models.AutoField(primary_key=True)
+#     appid = models.PositiveIntegerField(default=0)
 #     username = models.CharField(max_length=100)
 #     addtime = models.PositiveIntegerField(default=lambda :int(time.time()))
 #     finishtime = models.PositiveIntegerField(default=0)
-#     status = models.PositiveIntegerField(default=1)   #  2 正在发布  3 发布失败
+#     status = models.PositiveIntegerField(default=1)   # 2 正在发布  3 发布失败
+#     type = models.PositiveIntegerField(default=1)     # 1 发布     2 回滚
 #     log = models.TextField(default='')
+#     version = models.CharField(max_length=70)
+#     previous_pubid = models.CharField(max_length=70)
 #
 #     class Meta:
-#         db_table = "cap_webapp_publog"
+#         db_table = "cap_web_app_pub_log"
