@@ -15,7 +15,7 @@ def main():
         cmd_line = i.cmdline()
         mask = 0
         for j in cmd_line:
-            if "twistd" in j or ("cap-all-start" in j and 'cap-all-stop' not in j):
+            if "twistd" in j or ("cap-all" in j and 'cap-all-stop' not in j):
                 mask += 1
         if mask >=2 :
             worker_process = i
