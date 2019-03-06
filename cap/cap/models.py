@@ -248,8 +248,8 @@ class Repo(models.Model):
                 update_command = ""
             else:
                 if user or password:
-                    command = "cd %s && git clone https://%s:%s@%s%s  code_dir " % (
-                    code_monitor_dir, urllib.quote(user),
+                    command = "cd %s && git clone %s://%s:%s@%s%s  code_dir " % (
+                    code_monitor_dir, url_object.scheme, urllib.quote(user),
                     urllib.quote(password),
                     url_object.netloc, url_object.path)
                 else:
@@ -457,8 +457,8 @@ class CronTask(models.Model):
             else:  # git
                 url_object = urlparse.urlparse(repo_url)
                 if user or password:
-                    command = "cd %s && git clone https://%s:%s@%s%s  code_dir  -b  master    && cd  code_dir && git reset \
-                      --hard   %s" % (code_dir, urllib.quote(user), urllib.quote(password),
+                    command = "cd %s && git clone %s://%s:%s@%s%s  code_dir  -b  master    && cd  code_dir && git reset \
+                      --hard   %s" % (code_dir, url_object.scheme ,urllib.quote(user), urllib.quote(password),
                                       url_object.netloc, url_object.path, version)
                 else:
                     command = "cd %s && git clone %s  code_dir  -b  master    && cd  code_dir && git reset \
@@ -833,8 +833,8 @@ class DeamonTask(models.Model):
             else:  # git
                 url_object = urlparse.urlparse(repo_url)
                 if user or password:
-                    command = "cd %s && git clone https://%s:%s@%s%s  code_dir  -b  master    && cd  code_dir && git reset \
-                          --hard   %s" % (code_dir, urllib.quote(user), urllib.quote(password),
+                    command = "cd %s && git clone %s://%s:%s@%s%s  code_dir  -b  master    && cd  code_dir && git reset \
+                          --hard   %s" % (code_dir, url_object.scheme, urllib.quote(user), urllib.quote(password),
                                           url_object.netloc, url_object.path, version)
                 else:
                     command = "cd %s && git clone %s  code_dir  -b  master    && cd  code_dir && git reset \
