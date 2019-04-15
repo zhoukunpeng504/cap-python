@@ -215,7 +215,7 @@ class Repo(models.Model):
                 if not old_log:
                     old_log = ''
                 log = old_log + "[%s]:%s\n" % (datetime.datetime.now(), log)
-                log = log[-6000:]
+                log = log[-9000:]
                 run_sql(mysql_config, "update cap_repo_monitorlog set log=%s where repo_id=%s", (log, repo_id))
 
             def run_command(command):
@@ -266,20 +266,33 @@ class Repo(models.Model):
                     # git
                     try:
                         repo = Gittle(os.path.join(code_monitor_dir, "code_dir"))
-                        info = repo.commit_info(0, 300)
+                        local_branches = repo.branches.keys()
+                        remote_branches = [i.split("/")[-1] for i in repo.remote_branches.keys() if 'HEAD' not in i]
+                        for i in remote_branches:
+                            if i not in local_branches:
+                                os.system("git checkout %s" % i)
                     except Exception as e:
-                        log_to_db("获取git log失败！%s" % str(e))
+                        log_to_db("远程分支本地分支同步失败！%s" % str(e))
                     else:
-                        versions = []
-                        for i in info:
-                            commit = i["committer"]
-                            name = commit["name"]
-                            version = i["sha"][:32]
-                            message = i["message"].replace("\n", '').replace("\r", '').replace("   ", '')
-                            timestamp = int(i["time"])
-                            versions.append([int(repo_id), version, name, timestamp, message])
-                        add_versions_to_db(versions)
-                        log_to_db("获取到git commit信息，已写入到数据库!")
+                        for branch in remote_branches:
+                            try:
+                                os.system("git checkout %s" % branch)
+                                time.sleep(0.5)
+                                info = repo.commit_info(0, 300)
+                            except Exception as e:
+                                log_to_db("获取%s分支git log失败！%s" % (branch, str(e)))
+                            else:
+                                #_msg = "|".join([i["message"] for i in info])
+                                versions = []
+                                for i in info:
+                                    commit = i["committer"]
+                                    name = commit["name"]
+                                    version = i["sha"][:32]
+                                    message = i["message"].replace("\n", '').replace("\r", '').replace("   ", '')
+                                    timestamp = int(i["time"])
+                                    versions.append([int(repo_id), version, name, timestamp, message])
+                                add_versions_to_db(versions)
+                                log_to_db("获取到%s git commit信息，已写入到数据库!" % branch)
                 else:
                     # svn
                     stdout, stderr = run_command("svn log %s -l 500   --username %s --password %s  \
