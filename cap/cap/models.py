@@ -270,13 +270,13 @@ class Repo(models.Model):
                         remote_branches = [i.split("/")[-1] for i in repo.remote_branches.keys() if 'HEAD' not in i]
                         for i in remote_branches:
                             if i not in local_branches:
-                                os.system("git checkout %s" % i)
+                                os.system("cd %s && cd code_dir && git checkout %s" % (code_monitor_dir, i))
                     except Exception as e:
                         log_to_db("远程分支本地分支同步失败！%s" % str(e))
                     else:
                         for branch in remote_branches:
                             try:
-                                os.system("git checkout %s" % branch)
+                                os.system("cd %s && cd code_dir && git checkout %s" % (code_monitor_dir, branch))
                                 time.sleep(0.5)
                                 info = repo.commit_info(0, 300)
                             except Exception as e:
