@@ -276,7 +276,8 @@ class Repo(models.Model):
                     else:
                         for branch in remote_branches:
                             try:
-                                os.system("cd %s && cd code_dir && git checkout %s" % (code_monitor_dir, branch))
+                                os.system("cd %s && cd code_dir && git checkout %s && git pull origin %s" %
+                                          (code_monitor_dir, branch, branch))
                                 time.sleep(0.5)
                                 info = repo.commit_info(0, 300)
                             except Exception as e:
