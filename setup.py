@@ -10,7 +10,7 @@ setup(
                       "twisted==15.3.0",
                       "txscheduling",
                       "psutil",
-                      "django==1.4.22",
+                      "django==1.11.29",
                       'netifaces',
                       'PyCrypto==2.6',
                       'cloudpickle',
