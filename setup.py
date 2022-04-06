@@ -7,7 +7,7 @@ setup(
     version='0.1.15',
     install_requires=["setuptools",
                       "MySQL-python",
-                      "twisted==15.3.0",
+                      "twisted==22.2.0",
                       "txscheduling",
                       "psutil",
                       "django==1.4.22",
